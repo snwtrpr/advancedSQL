@@ -1,0 +1,28 @@
+WITH demographics AS (
+  SELECT
+    CoC_Name AS area,
+    overall_homeless,
+    Homeless_individuals,
+    homeless_people_in_families,
+    Homeless_Family_Households,
+    chronically_homeless,
+    homeless_veterans,
+    Homeless_unaccompanied_youth_under_25,
+    Homeless_unaccompanied_youth_under_18,
+    Homeless_unaccompanied_youth_age_18_24,
+    Homeless_parenting_youth_under_25,
+    Homeless_parenting_youth_under_18,
+    Homeless_parenting_youth_age_18_24,
+    Homeless_children_of_Parenting_youth,
+    count_year AS year
+  FROM `bigquery-public-data.sdoh_hud_pit_homelessness.hud_pit_by_coc`
+    )
+SELECT 
+  area,
+  ARRAY_AGG(STRUCT(overall_homeless,year)
+    ORDER BY year DESC
+  ) as demographic
+FROM demographics
+GROUP BY area
+ORDER BY MAX(overall_homeless) DESC
+  
